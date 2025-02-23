@@ -13,10 +13,21 @@ const checkCookie = require("./Middleware/checkCookies");
 const { getCookies } = require("./Controllers/getCookies");
 
 
+const BACKEND_URL =
+    process.env.NODE_APP_ENV === "Production"
+        ? process.env.NODE_APP_PRODUCTION_BACKEND_URL
+        : process.env.NODE_APP_LOCAL_BACKEND_URL;
+
+        const FRONTEND_URL =
+        process.env.NODE_APP_ENV === "Production"
+            ? process.env.NODE_APP_PRODUCTION_FRONTEND_URL
+            : process.env.NODE_APP_LOCAL_FRONTEND_URL;
+
+
 // Middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from this origin
+    origin: FRONTEND_URL, // Allow requests from this origin
     methods: "GET, POST, PUT, DELETE", // Allowed methods
     credentials: true, // Allow credentials (cookies, authorization headers)
   })

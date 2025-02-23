@@ -3,9 +3,20 @@ const { app } = require("./../app");
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
+
+const BACKEND_URL =
+    process.env.NODE_APP_ENV === "Production"
+        ? process.env.NODE_APP_PRODUCTION_BACKEND_URL
+        : process.env.NODE_APP_LOCAL_BACKEND_URL;
+
+        const FRONTEND_URL =
+        process.env.NODE_APP_ENV === "Production"
+            ? process.env.NODE_APP_PRODUCTION_FRONTEND_URL
+            : process.env.NODE_APP_LOCAL_FRONTEND_URL;
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Replace with your React app URL
+    origin: FRONTEND_URL, // Replace with your NODE app URL
     methods: ["GET", "POST"],
   },
 });

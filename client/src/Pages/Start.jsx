@@ -9,10 +9,19 @@ function Start() {
     const [shareLink, setShareLink] = useState(null);
     const linkRef = useRef(null);
     // Save the meeting info in database
+    const BACKEND_URL =
+    process.env.REACT_APP_ENV === "Production"
+        ? process.env.REACT_APP_PRODUCTION_BACKEND_URL
+        : process.env.REACT_APP_LOCAL_BACKEND_URL;
+
+        const FRONTEND_URL =
+        process.env.REACT_APP_ENV === "Production"
+            ? process.env.REACT_APP_PRODUCTION_FRONTEND_URL
+            : process.env.REACT_APP_LOCAL_FRONTEND_URL;
     const saveMeet = useCallback(() => {
         console.log("Data gone");
         const content = { Name: name };
-        fetch(`http://localhost:5000/saveMeet`, {
+        fetch(`${BACKEND_URL}/saveMeet`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -30,7 +39,7 @@ function Start() {
     
                     setSmallLink(`/meeting?meetingId=${meetingId}`);
                     setShareLink(
-                        `http://localhost:5173/meeting?meetingId=${meetingId}`
+                        `${FRONTEND_URL}/meeting?meetingId=${meetingId}`
                     );
                 }
             })

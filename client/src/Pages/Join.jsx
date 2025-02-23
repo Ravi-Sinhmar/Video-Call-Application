@@ -10,6 +10,7 @@ import { webRtc } from "../states/atoms/Call";
 import { peerState } from "../states/atoms/User";
 import { usePeer } from "../utils/peer";
 
+
 export default function Join() {
     const [isAdmin, setIsAdmin] = useRecoilState(admin);
     const [isBoth, setIsBoth] = useRecoilState(both);
@@ -22,27 +23,32 @@ export default function Join() {
     const remoteVideoRef = useRef();
     const { peer, createOffer, createAnswer, setRemoteAnswer } = usePeer();
 
+    const BACKEND_URL =
+        process.env.REACT_APP_ENV === "Production"
+            ? process.env.REACT_APP_PRODUCTION_BACKEND_URL
+            : process.env.REACT_APP_LOCAL_BACKEND_URL;
+
     useEffect(() => {
         const meetingId = searchParams.get("meetingId");
         if (!meetingId) return;
 
-        fetch("http://localhost:5000/seeMeet", {
+        fetch(`${BACKEND_URL}/seeMeet`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ meetingId })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                setMeetingId(meetingId);
-                if (meetingId === localStorage.getItem("meetingId")) {
-                    setIsAdmin(true);
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setMeetingId(meetingId);
+                    if (meetingId === localStorage.getItem("meetingId")) {
+                        setIsAdmin(true);
+                    }
                 }
-            }
-        })
-        .catch(error => console.error("Error sending meetingId:", error));
+            })
+            .catch(error => console.error("Error sending meetingId:", error));
     }, [searchParams]);
 
     useEffect(() => {
