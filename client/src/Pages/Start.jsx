@@ -10,14 +10,14 @@ function Start() {
     const linkRef = useRef(null);
     // Save the meeting info in database
     const BACKEND_URL =
-    process.env.REACT_APP_ENV === "Production"
-        ? process.env.REACT_APP_PRODUCTION_BACKEND_URL
-        : process.env.REACT_APP_LOCAL_BACKEND_URL;
+    import.meta.env.VITE_ENV === "Production"
+      ? import.meta.env.VITE_PRODUCTION_BACKEND_URL
+      : import.meta.env.VITE_LOCAL_BACKEND_URL;
 
-        const FRONTEND_URL =
-        process.env.REACT_APP_ENV === "Production"
-            ? process.env.REACT_APP_PRODUCTION_FRONTEND_URL
-            : process.env.REACT_APP_LOCAL_FRONTEND_URL;
+      const FRONTEND_URL =
+  import.meta.env.VITE_ENV === "Production"
+    ? import.meta.env.VITE_PRODUCTION_FRONTEND_URL
+    : import.meta.env.VITE_LOCAL_FRONTEND_URL;
     const saveMeet = useCallback(() => {
         console.log("Data gone");
         const content = { Name: name };

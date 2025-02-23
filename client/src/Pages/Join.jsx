@@ -23,10 +23,11 @@ export default function Join() {
     const remoteVideoRef = useRef();
     const { peer, createOffer, createAnswer, setRemoteAnswer } = usePeer();
 
-    const BACKEND_URL =
-        process.env.REACT_APP_ENV === "Production"
-            ? process.env.REACT_APP_PRODUCTION_BACKEND_URL
-            : process.env.REACT_APP_LOCAL_BACKEND_URL;
+
+            const BACKEND_URL =
+  import.meta.env.VITE_ENV === "Production"
+    ? import.meta.env.VITE_PRODUCTION_BACKEND_URL
+    : import.meta.env.VITE_LOCAL_BACKEND_URL;
 
     useEffect(() => {
         const meetingId = searchParams.get("meetingId");
