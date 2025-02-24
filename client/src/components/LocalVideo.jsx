@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { getMediaStream } from "../utils/localStream";
 import { video, mic, configration } from "../states/atoms/Media";
-import { usePeer } from '../utils/peer';
+import { usePeer } from '../Contexts/peer';
 
 export default function LocalVideo() {
     const localVideoRef = useRef();
