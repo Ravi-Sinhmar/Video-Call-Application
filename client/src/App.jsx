@@ -17,7 +17,7 @@ function App() {
     <PeerProvider>
       <Router>
         {/* Render Loader outside Routes */}
-        {isLoading && <Loader />}
+        {isLoading &&  <Loader>Loading...</Loader>}
         <Routes>
           <Route path="/" element={<Start />} />
           <Route path="/meeting" element={<Join />} />

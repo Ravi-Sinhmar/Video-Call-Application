@@ -22,3 +22,9 @@ export const voice = atom({
   key: "isVoice",
   default: false,
 });
+
+
+export const join = atom({
+  key: "isJoin",
+  default: false,
+});

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { loading } from "../states/atoms/User";
-import { useResetRecoilState } from "recoil";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 
 // setting url from .env file
 const BACKEND_URL =
@@ -16,7 +16,7 @@ const BACKEND_URL =
 
 function Start() {
     const navigate = useNavigate();
-    const setIsLoading = useResetRecoilState(loading);
+    const setIsLoading = useSetRecoilState(loading);
     const [isClick, setIsClick] = useState(false);
     const [name, setName] = useState("");
     const [smallLink, setSmallLink] = useState(null);
