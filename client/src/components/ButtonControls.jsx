@@ -76,7 +76,7 @@ export default function ButtonControls() {
                         {isMic ? (
                             <IoMdMic className="size-8 p-1 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <IoMdMicOff className="size-8 p-1 text-blt rounded-full" />
+                            <IoMdMicOff className="size-8 p-1 text-blt rounded-full bg-zinc-200" />
                         )}
 
                         <p>Mic</p>
@@ -87,7 +87,7 @@ export default function ButtonControls() {
                         {isVideo ? (
                             <IoVideocam className="size-8 p-1 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <IoVideocamOff className="size-8 p-1 text-blt rounded-full" />
+                            <IoVideocamOff className="size-8 p-1 text-blt rounded-full bg-zinc-200" />
                         )}
 
 
@@ -100,7 +100,7 @@ export default function ButtonControls() {
                         {isVoice ? (
                             <HiMiniSpeakerWave className="size-8 p-1 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <HiMiniSpeakerXMark className="size-8 p-1 text-blt rounded-full" />
+                            <HiMiniSpeakerXMark className="size-8 p-1 text-blt rounded-full bg-zinc-200" />
                         )}
 
 
@@ -111,9 +111,9 @@ export default function ButtonControls() {
                     {/* Disconnect */}
                     <button onClick={handleJoin} className="flex flex-col text-sm items-center justify-center gap-1">
                         {isJoin ? (
-                            <ImPhoneHangUp className="size-8 p-1 bg-blue-500 text-white rounded-full" />
+                            <ImPhoneHangUp className="size-8 p-1 bg-red-700 text-white rounded-full" />
                         ) : (
-                            <IoCall className="size-8 p-1 text-blt rounded-full" />
+                            <IoCall className="size-8 p-1 text-blt rounded-full bg-zinc-200" />
                         )}
                         <p>{isJoin? "Cut" : "Call"}</p>
                     </button>
