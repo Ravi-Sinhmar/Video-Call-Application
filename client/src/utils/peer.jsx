@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect ,useMemo} from "react";
 
 const PeerContext = createContext(null);
 
@@ -6,45 +6,21 @@ export const usePeer = () => {
   return useContext(PeerContext);
 };
 
-const peerConfiguration = {
-  iceServers: [
-    {
-      urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:global.stun.twilio.com:3478",
-      ],
-    },
-  ],
-};
-
 function PeerProvider({ children }) {
-  const [peer, setPeer] = useState(new RTCPeerConnection(peerConfiguration));
-
-  useEffect(() => {
-    const newPeer = new RTCPeerConnection(peerConfiguration);
-
-    newPeer.oniceconnectionstatechange = () => {
-      console.log("ICE Connection State:", newPeer.iceConnectionState);
-      if (newPeer.iceConnectionState === "connected") {
-        console.log("WebRTC connection established!");
-        alert("WebRTC connection established!");
-      }
-    };
-
-    newPeer.onconnectionstatechange = () => {
-      console.log("Connection State:", newPeer.connectionState);
-      if (newPeer.connectionState === "connected") {
-        console.log("WebRTC connection is fully connected!");
-        alert("WebRTC connection is fully connected!");
-      }
-    };
-
-    setPeer(newPeer);
-
-    return () => {
-      newPeer.close();
-    };
-  }, []);
+  const peer = useMemo(
+    () =>
+      new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: [
+              "stun:stun.l.google.com:19302",
+              "stun:global.stun.twilio.com:3478",
+            ],
+          },
+        ],
+      }),
+    []
+  );
 
   const createOffer = async () => {
     if (!peer) {
@@ -61,7 +37,7 @@ function PeerProvider({ children }) {
       console.log("Peer is not instantiated");
       return null;
     }
-    await peer.setRemoteDescription(new RTCSessionDescription(offer));
+    await peer.setRemoteDescription(offer);
     const answer = await peer.createAnswer();
     await peer.setLocalDescription(answer);
     return answer;
@@ -72,26 +48,22 @@ function PeerProvider({ children }) {
       console.log("Peer is not instantiated");
       return false;
     }
-    await peer.setRemoteDescription(new RTCSessionDescription(answer));
+    await peer.setRemoteDescription(answer);
     return true;
   };
 
   const sendVideo = async (video) => {
-    if (!video || !peer) {  
+    if (!video || !peer) {
       console.log("Video or peer is not initialized");
-      return; 
+      return;
     }
-  
-    const tracks = video.getTracks(); // Get tracks from MediaStream
-    const senders = peer.getSenders(); // Get existing senders
-  
-    console.log("Video:", video);
-    console.log("Tracks:", tracks);
-    console.log("Senders:", senders);
-  
+
+    const tracks = video.getTracks();
+    const senders = peer.getSenders();
+
     for (const track of tracks) {
-      const senderExists = senders.some(sender => sender.track && sender.track.id === track.id);
-  
+      const senderExists = senders.some((sender) => sender.track && sender.track.id === track.id);
+
       if (!senderExists) {
         console.log("Adding track:", track);
         peer.addTrack(track, video);
@@ -101,8 +73,20 @@ function PeerProvider({ children }) {
     }
   };
 
+  const closePeerConnection = () => {
+    if (peer) {
+      peer.close();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      closePeerConnection();
+    };
+  }, [peer]);
+
   return (
-    <PeerContext.Provider value={{ peer, sendVideo, createOffer, createAnswer, setRemoteAnswer }}>
+    <PeerContext.Provider value={{ peer, sendVideo, createOffer, createAnswer, setRemoteAnswer, closePeerConnection }}>
       {children}
     </PeerContext.Provider>
   );

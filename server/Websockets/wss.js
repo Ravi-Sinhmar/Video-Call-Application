@@ -89,6 +89,41 @@ io.on("connection", (socket) => {
     io.to(roomData.admin).emit("user:done");
   });
 
+  socket.on("nego:offer", ({ email, room,offer }) => {
+    console.log("Got neg offer",email,room);
+    const roomData= meetingRooms.get(room);
+    if(!roomData) return;
+    if(email == 'user@gmail.com'){
+      if(!roomData.admin) return;
+      io.to(roomData.admin).emit("nego:offer",{offer});
+    }else{
+      if(!roomData.user) return;
+      io.to(roomData.user).emit("nego:offer",{offer});
+    }
+  });
+
+  socket.on("nego:answer", ({ email, room,answer }) => {
+    console.log("Got neg answer",email,room);
+    const roomData= meetingRooms.get(room);
+    if(!roomData) return;
+    if(email == 'user@gmail.com'){
+      if(!roomData.admin) return;
+      io.to(roomData.admin).emit("nego:answer",{answer});
+    }else{
+      if(!roomData.user) return;
+      io.to(roomData.user).emit("nego:answer",{answer});
+    }
+  });
+
+  socket.on("nego:done", ({ email, room }) => {
+    console.log("Got neg done",email,room);
+    const roomData= meetingRooms.get(room);
+    if(!roomData) return;
+      if(!roomData.admin || !roomData.user) return;
+      io.to(roomData.admin).emit("nego:done");
+      io.to(roomData.user).emit("nego:done");
+  });
+
 
   socket.on("room:leave", ({ email, room }) => {
     console.log(`${email} is leaving the room: ${room}`);

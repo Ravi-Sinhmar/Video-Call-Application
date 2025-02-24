@@ -6,10 +6,7 @@ import { IoVideocamOff, IoVideocam } from "react-icons/io5";
 import { admin } from '../states/atoms/User';
 import { webRtc } from '../states/atoms/Call';
 import { peerState } from '../states/atoms/User';
-
 import { usePeer } from '../utils/peer';
-
-
 export default function LocalVideo() {
     const localVideoRef = useRef();
     const [isAdmin, setIsAdmin] = useRecoilState(admin);
@@ -36,10 +33,10 @@ export default function LocalVideo() {
     };
 
     useEffect(() => {
-        if (peer && isAdmin) {
+        if (peer) {
             openMediaDevices();
         }
-    }, [peer, isAdmin]);
+    }, [peer]);
 
     const closeMediaDevices = async () => {
         const stream = await getMediaStream(constraints);

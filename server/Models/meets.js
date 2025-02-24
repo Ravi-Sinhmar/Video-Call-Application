@@ -7,7 +7,7 @@ const meetSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 1800 // 1800 seconds = 30 minutes
+    expires: 18000 // 1800 seconds = 30 minutes
   }
 });
 

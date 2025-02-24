@@ -13,7 +13,6 @@ import Join from "./Pages/Join";
 
 function App() {
   const isLoading = useRecoilValue(loading);
-
   return (
     <PeerProvider>
       <Router>
