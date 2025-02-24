@@ -1,15 +1,10 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { loading } from "../states/atoms/User";
+import { useResetRecoilState } from "recoil";
 
-function Start() {
-    const navigate = useNavigate();
-    const [isClick, setIsClick] = useState(false);
-    const [name, setName] = useState("");
-    const [smallLink, setSmallLink] = useState(null);
-    const [shareLink, setShareLink] = useState(null);
-    const linkRef = useRef(null);
-    // Save the meeting info in database
-    const BACKEND_URL =
+// setting url from .env file
+const BACKEND_URL =
     import.meta.env.VITE_ENV === "Production"
       ? import.meta.env.VITE_PRODUCTION_BACKEND_URL
       : import.meta.env.VITE_LOCAL_BACKEND_URL;
@@ -18,9 +13,19 @@ function Start() {
   import.meta.env.VITE_ENV === "Production"
     ? import.meta.env.VITE_PRODUCTION_FRONTEND_URL
     : import.meta.env.VITE_LOCAL_FRONTEND_URL;
+
+function Start() {
+    const navigate = useNavigate();
+    const setIsLoading = useResetRecoilState(loading);
+    const [isClick, setIsClick] = useState(false);
+    const [name, setName] = useState("");
+    const [smallLink, setSmallLink] = useState(null);
+    const [shareLink, setShareLink] = useState(null);
+    const linkRef = useRef(null);
+ 
     const saveMeet = useCallback(() => {
-        console.log("Data gone");
         const content = { Name: name };
+        setIsLoading(true);
         fetch(`${BACKEND_URL}/saveMeet`, {
             method: "POST",
             credentials: "include",
@@ -31,12 +36,10 @@ function Start() {
         })
             .then((data) => data.json())
             .then((response) => {
+                setIsLoading(false);
                 if (response.success) {
                     const meetingId = response.data;
-    
-                    // Store meetingId in localStorage
                     localStorage.setItem("meetingId", meetingId);
-    
                     setSmallLink(`/meeting?meetingId=${meetingId}`);
                     setShareLink(
                         `${FRONTEND_URL}/meeting?meetingId=${meetingId}`
@@ -44,9 +47,11 @@ function Start() {
                 }
             })
             .catch((err) => {
+                setIsLoading(false);
                 console.log(err);
             });
     }, [name]);
+
 
     //   Copy Link and Forward
     const copyToClipboard = async () => {
@@ -57,8 +62,6 @@ function Start() {
             console.error("Failed to copy: ", err);
         }
     };
-
-
 
     return (
         <React.Fragment>

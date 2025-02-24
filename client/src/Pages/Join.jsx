@@ -1,23 +1,19 @@
 import React, { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { both, admin, meetingDetails, userSocket, adminSocket } from "../states/atoms/User";
-import { configration } from "../states/atoms/Media";
+import { admin, meetingDetails } from "../states/atoms/User";
 import ButtonControls from "../components/ButtonControls";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import LocalVideo from "../components/LocalVideo";
 import { socket } from "../utils/websocket";
-import { webRtc } from "../states/atoms/Call";
 import { peerState } from "../states/atoms/User";
-import { usePeer } from "../utils/peer";
+import { usePeer } from "../Contexts/peer";
+import { loading } from "../states/atoms/User";
 
 export default function Join() {
+    const setIsLoading= useSetRecoilState(loading)
   const [isAdmin, setIsAdmin] = useRecoilState(admin);
-  const [isBoth, setIsBoth] = useRecoilState(both);
   const [meetingId, setMeetingId] = useRecoilState(meetingDetails);
-  const [isConnected, setIsConnected] = useRecoilState(webRtc);
   const [isPeer, setIsPeer] = useRecoilState(peerState);
-  const [isAdminConnected, setIsAdminConnected] = useRecoilState(adminSocket);
-  const [isUserConnected, setIsUserConnected] = useRecoilState(userSocket);
   const [searchParams] = useSearchParams();
   const remoteVideoRef = useRef();
   const { peer, createOffer, createAnswer, setRemoteAnswer, closePeerConnection } = usePeer();
@@ -30,6 +26,7 @@ export default function Join() {
   useEffect(() => {
     const meetingId = searchParams.get("meetingId");
     if (!meetingId) return;
+    setIsLoading(true);
 
     fetch(`${BACKEND_URL}/seeMeet`, {
       method: "POST",
@@ -40,6 +37,7 @@ export default function Join() {
     })
       .then((response) => response.json())
       .then((data) => {
+        setIsLoading(false);
         if (data.success) {
           setMeetingId(meetingId);
           if (meetingId === localStorage.getItem("meetingId")) {
@@ -47,7 +45,9 @@ export default function Join() {
           }
         }
       })
-      .catch((error) => console.error("Error sending meetingId:", error));
+      .catch((error) => {
+        setIsLoading(false);
+        console.error("Error sending meetingId:", error)});
   }, [searchParams]);
 
   useEffect(() => {
@@ -58,39 +58,18 @@ export default function Join() {
 
     socket.on("room:joined", (data) => {
       console.log(`You are a ${data.role} in meeting ${data.meetingId}`);
-      if (isAdmin) {
-        setIsAdminConnected(true);
-      } else {
-        setIsUserConnected(true);
-      }
     });
 
     socket.on("peer:joined", (data) => {
       console.log(`${data.role} joined the meeting: ${data.meetingId}`);
-      if (!isAdmin) {
-        setIsAdminConnected(true);
-      } else {
-        setIsUserConnected(true);
-      }
     });
 
     socket.on("peer:left", (data) => {
       console.log(`${data.role} left the meeting: ${data.meetingId}`);
-      setIsBoth(false);
-      if (isAdmin) {
-        setIsUserConnected(false);
-      } else {
-        setIsAdminConnected(false);
-      }
     });
 
     return () => {
       socket.emit("room:leave", { email, room: meetingId });
-      if (isAdmin) {
-        setIsAdminConnected(false);
-      } else {
-        setIsUserConnected(false);
-      }
       socket.disconnect();
       closePeerConnection();
     };
@@ -117,7 +96,6 @@ export default function Join() {
         socket.emit("user:answer", { email, room: meetingId, answer });
       };
       const handleDone = () => {
-        setIsConnected(true);
         console.log("Done connection");
       };
 
@@ -138,7 +116,7 @@ export default function Join() {
         console.log("Got the answer, now I will set it in my remoteAnswer");
         const status = await setRemoteAnswer(answer);
         if (status) {
-          setIsConnected(true);
+   
           socket.emit("user:done", { email, room: meetingId });
           console.log("Done sent");
         }
@@ -149,7 +127,7 @@ export default function Join() {
         socket.off("user:answer", handleAdminAnswer);
       };
     }
-  }, [isAdmin, socket, setRemoteAnswer, setIsConnected, meetingId]);
+  }, [isAdmin, socket, setRemoteAnswer, meetingId]);
 
   useEffect(() => {
     const handleNegoNeeded = async () => {
@@ -176,14 +154,12 @@ export default function Join() {
       };
 
       const handleNegDone = () => {
-        setIsConnected(true);
         console.log("Neg Done");
       };
       const handleNegSetAnswer = async ({ answer }) => {
         console.log("Got the answer, now I will set it in my remoteAnswer");
         const status = await setRemoteAnswer(answer);
         if (status) {
-          setIsConnected(true);
           socket.emit("nego:done", { email, room: meetingId });
           console.log("Sent Neg");
         }
@@ -225,7 +201,6 @@ export default function Join() {
         <div className="w-svw h-svh bg-white flex justify-center items-center sm:w-10/12 md:w-3/5 lg:w-2/5 md:aspect-square">
           <div className="bg-transparent ring-4 ring-blf rounded-lg h-full w-full flex flex-col justify-between overflow-hidden relative px-2 pt-2">
             <button onClick={handleConnect}>Connect</button>
-            <button onClick={() => setIsConnected(!isConnected)}>Change isConnected</button>
             <LocalVideo />
             <div className="flex flex-col justify-center items-center h-full">
               <video

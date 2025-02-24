@@ -5,7 +5,7 @@ import { loading } from "./states/atoms/User";
 
 // Components
 import Loader from "./components/Loader";
-import PeerProvider from "./utils/peer"; // Import PeerProvider
+import PeerProvider from "./Contexts/peer"; // Import PeerProvider
 
 // Pages
 import Start from "./Pages/Start";

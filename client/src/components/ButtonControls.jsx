@@ -1,16 +1,25 @@
 import React from 'react'
 import { useRecoilState } from "recoil";
-import { video, mic } from "../states/atoms/Media";
+import { video, mic,voice } from "../states/atoms/Media";
+import { admin } from '../states/atoms/User';
+
 
 // Icons
 import { MdAddCall } from "react-icons/md";
 import { IoVideocamOff, IoVideocam, IoCall } from "react-icons/io5";
 import { IoMdMicOff, IoMdMic } from "react-icons/io";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
+import { ImPhoneHangUp } from "react-icons/im";
+
+
 
 export default function ButtonControls() {
     const [isVideo, setIsVideo] = useRecoilState(video);
     const [isMic, setIsMic] = useRecoilState(mic);
+    const [isVoice, setIsVoice] = useRecoilState(voice);
+    const [isAdmin,setIsAdmin] = useRecoilState(admin);
+  
+
 
 
     return (
@@ -43,7 +52,7 @@ export default function ButtonControls() {
                     {/* Sound */}
 
                     <button className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isVideo ? (
+                        {isVoice ? (
                             <HiMiniSpeakerWave className="size-8 p-1 bg-blue-500 text-white rounded-full" />
                         ) : (
                             <HiMiniSpeakerXMark className="size-8 p-1 text-blt rounded-full" />
@@ -56,12 +65,13 @@ export default function ButtonControls() {
 
                     {/* Disconnect */}
                     <button className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isVideo ? (
-                            <IoCall className="size-8 p-1 bg-blue-500 text-white rounded-full" />
+                        {isAdmin ? (
+                            <ImPhoneHangUp className="size-8 p-1 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <MdAddCall className="size-8 p-1 text-blt rounded-full" />
+                            <IoCall className="size-8 p-1 text-blt rounded-full" />
                         )}
-                        <p>Voice</p>
+                        <p>{isAdmin? "Cut" : "Call"}</p>
+                        
                     </button>
                 </div>
             </div>
