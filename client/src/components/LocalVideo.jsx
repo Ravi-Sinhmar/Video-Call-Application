@@ -1,41 +1,51 @@
 import React, { useEffect, useRef } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { getMediaStream } from "../utils/localStream";
 import { video, mic, configration } from "../states/atoms/Media";
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { usePeer } from '../Contexts/peer';
+import { usePeer } from '../utils/peer';
 
 export default function LocalVideo() {
     const localVideoRef = useRef();
-    const setIsVideo = useSetRecoilState(video);
     const constraints = useRecoilValue(configration);
     const setIsMic = useSetRecoilState(mic);
+    const setIsVideo = useSetRecoilState(video);
     const { peer, sendVideo } = usePeer();
 
     const openMediaDevices = async () => {
         const stream = await getMediaStream(constraints);
         if (stream && localVideoRef.current) {
-            setIsMic(true);
-            setIsVideo(true);
+            setIsMic(constraints.audio);
+            setIsVideo(constraints.video);
             localVideoRef.current.srcObject = stream;
             if (peer) {
-                await sendVideo(stream)
+                await sendVideo(stream);
             }
         }
     };
 
     useEffect(() => {
+        console.log("Constraints updated:", constraints);
         if (peer) {
             openMediaDevices();
         }
-    }, [peer,constraints]);
+    }, [peer, JSON.stringify(constraints)]); // Deep comparison
+
+    // Cleanup media tracks on unmount
+    useEffect(() => {
+        return () => {
+            if (localVideoRef.current?.srcObject) {
+                localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, []);
+
     return (
         <video
             ref={localVideoRef}
             autoPlay
             playsInline
-            muted // Correct way to handle "muted"
+            muted={true} // Mute local video to avoid feedback
             className="absolute right-4 top-4 rounded-md object-cover h-28 w-20 sm:h-32 sm:w-24 ring-2 ring-black"
         />
-
     );
 }

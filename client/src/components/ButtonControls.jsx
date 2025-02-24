@@ -1,15 +1,12 @@
-import React from 'react'
-import { useRecoilState } from "recoil";
-import { video, mic,voice,join, configration } from "../states/atoms/Media";
+import React from 'react';
+import { useRecoilState, useRecoilValue } from "recoil";
+import { video, mic, voice, join, configration } from "../states/atoms/Media";
 
 // Icons
 import { IoVideocamOff, IoVideocam, IoCall } from "react-icons/io5";
 import { IoMdMicOff, IoMdMic } from "react-icons/io";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
 import { ImPhoneHangUp } from "react-icons/im";
-
-
-
 
 export default function ButtonControls() {
     const [isVideo, setIsVideo] = useRecoilState(video);
@@ -18,107 +15,73 @@ export default function ButtonControls() {
     const [isJoin, setIsJoin] = useRecoilState(join);
     const [constraints, setConstraints] = useRecoilState(configration);
 
-
-    function handleJoin(){
-        if(!isJoin){
-            console.log("Join");
-            setIsJoin(true);
-        }else{
-
-            console.log("Disconnect");
-            setIsJoin(false);
-        }
-    };
-
-    function handleMic(){
-        if(!isMic){
-            console.log("Mic Start");
-            setIsMic(true);
-        }else{
-            console.log("Mic Off");
-            setIsMic(false);
-        }
-
+    function handleJoin() {
+        setIsJoin(!isJoin);
+        console.log(isJoin ? "Disconnect" : "Join");
     }
 
-    function handleVideo(){
-        if(!isVideo){
-            console.log("Video Start");
-            setIsVideo(true);
-        }else{
-            console.log("Vidoe Off");
-            setIsVideo(false);
-        }
-
-    };
-
-    function handleVoice(){
-        if(!isVoice){
-            console.log("Voice Start");
-            setIsVoice(true);
-        }else{
-            console.log("Voice Off");
-            setIsVoice(false);
-        }
+    function handleMic() {
+        const newConstraints = { ...constraints, audio: !isMic };
+        setConstraints(newConstraints);
+        setIsMic(!isMic);
+        console.log(isMic ? "Mic Off" : "Mic Start");
     }
 
+    function handleVideo() {
+        const newConstraints = { ...constraints, video: !isVideo };
+        setConstraints(newConstraints);
+        setIsVideo(!isVideo);
+        console.log(isVideo ? "Video Off" : "Video Start");
+    }
 
-  
-
-
+    function handleVoice() {
+        setIsVoice(!isVoice);
+        console.log(isVoice ? "Voice Off" : "Voice Start");
+    }
 
     return (
-        <>
-            <div className="w-full bg-transparent py-2 flex items-center justify-center">
-                <div className="flex justify-between w-full rounded-md ring-2 ring-black items-center px-4 py-2 bg-white h-fit">
-                    {/* Mic Toggle */}
-                    <button onClick={handleMic} className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isMic ? (
-                            <IoMdMic className="size-8 p-2 bg-blue-500 text-white rounded-full" />
-                        ) : (
-                            <IoMdMicOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
-                        )}
+        <div className="w-full bg-transparent py-2 flex items-center justify-center">
+            <div className="flex justify-between w-full rounded-md ring-2 ring-black items-center px-4 py-2 bg-white h-fit">
+                {/* Mic Toggle */}
+                <button onClick={handleMic} className="flex flex-col text-sm items-center justify-center gap-1">
+                    {isMic ? (
+                        <IoMdMic className="size-8 p-2 bg-blue-500 text-white rounded-full" />
+                    ) : (
+                        <IoMdMicOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
+                    )}
+                    <p>Mic</p>
+                </button>
 
-                        <p>Mic</p>
-                    </button>
+                {/* Video Toggle */}
+                <button onClick={handleVideo} className="flex flex-col text-sm items-center justify-center gap-1">
+                    {isVideo ? (
+                        <IoVideocam className="size-8 p-2 bg-blue-500 text-white rounded-full" />
+                    ) : (
+                        <IoVideocamOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
+                    )}
+                    <p>Video</p>
+                </button>
 
-                    {/* Video Toggle */}
-                    <button onClick={handleVideo} className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isVideo ? (
-                            <IoVideocam className="size-8 p-2 bg-blue-500 text-white rounded-full" />
-                        ) : (
-                            <IoVideocamOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
-                        )}
+                {/* Sound Toggle */}
+                <button onClick={handleVoice} className="flex flex-col text-sm items-center justify-center gap-1">
+                    {isVoice ? (
+                        <HiMiniSpeakerWave className="size-8 p-2 bg-blue-500 text-white rounded-full" />
+                    ) : (
+                        <HiMiniSpeakerXMark className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
+                    )}
+                    <p>Speaker</p>
+                </button>
 
-
-                        <p>Video</p>
-                    </button>
-
-                    {/* Sound */}
-
-                    <button onClick={handleVoice} className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isVoice ? (
-                            <HiMiniSpeakerWave className="size-8 p-2 bg-blue-500 text-white rounded-full" />
-                        ) : (
-                            <HiMiniSpeakerXMark className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
-                        )}
-
-
-                        <p>Speaker</p>
-                    </button>
-
-
-                    {/* Disconnect */}
-                    <button onClick={handleJoin} className="flex flex-col text-sm items-center justify-center gap-1">
-                        {isJoin ? (
-                            <ImPhoneHangUp className="size-8 p-2 bg-red-700 text-white rounded-full" />
-                        ) : (
-                            <IoCall className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
-                        )}
-                        <p>{isJoin? "Cut" : "Call"}</p>
-                    </button>
-                </div>
+                {/* Disconnect */}
+                <button onClick={handleJoin} className="flex flex-col text-sm items-center justify-center gap-1">
+                    {isJoin ? (
+                        <ImPhoneHangUp className="size-8 p-2 bg-red-700 text-white rounded-full" />
+                    ) : (
+                        <IoCall className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
+                    )}
+                    <p>{isJoin ? "Cut" : "Call"}</p>
+                </button>
             </div>
-        </>
-    )
+        </div>
+    );
 }
