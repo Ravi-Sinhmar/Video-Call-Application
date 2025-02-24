@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { getMediaStream } from "../utils/localStream";
+import { getMediaStream } from "../utils/getStream";
 import { video, mic, configration } from "../states/atoms/Media";
 import { usePeer } from '../Contexts/peer';
 
@@ -12,14 +12,24 @@ export default function LocalVideo() {
     const { peer, sendVideo } = usePeer();
 
     const openMediaDevices = async () => {
-        const stream = await getMediaStream(constraints);
-        if (stream && localVideoRef.current) {
-            setIsMic(constraints.audio);
-            setIsVideo(constraints.video);
-            localVideoRef.current.srcObject = stream;
-            if (peer) {
-                await sendVideo(stream);
+        // Ensure at least one of audio or video is true
+        if (!constraints.audio && !constraints.video) {
+            console.log("Both audio and video are disabled. Skipping getUserMedia.");
+            return;
+        }
+
+        try {
+            const stream = await getMediaStream(constraints);
+            if (stream && localVideoRef.current) {
+                setIsMic(constraints.audio);
+                setIsVideo(constraints.video);
+                localVideoRef.current.srcObject = stream;
+                if (peer) {
+                    await sendVideo(stream);
+                }
             }
+        } catch (error) {
+            console.error("Error accessing media devices:", error);
         }
     };
 

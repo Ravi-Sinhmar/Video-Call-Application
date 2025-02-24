@@ -22,6 +22,12 @@ export default function ButtonControls() {
 
     function handleMic() {
         const newConstraints = { ...constraints, audio: !isMic };
+
+        // Ensure at least one of audio or video is true
+        if (!newConstraints.audio && !newConstraints.video) {
+            newConstraints.audio = true; // Force audio to be true
+        }
+
         setConstraints(newConstraints);
         setIsMic(!isMic);
         console.log(isMic ? "Mic Off" : "Mic Start");
@@ -29,6 +35,12 @@ export default function ButtonControls() {
 
     function handleVideo() {
         const newConstraints = { ...constraints, video: !isVideo };
+
+        // Ensure at least one of audio or video is true
+        if (!newConstraints.audio && !newConstraints.video) {
+            newConstraints.video = true; // Force video to be true
+        }
+
         setConstraints(newConstraints);
         setIsVideo(!isVideo);
         console.log(isVideo ? "Video Off" : "Video Start");
