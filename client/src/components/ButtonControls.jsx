@@ -1,8 +1,6 @@
 import React from 'react'
 import { useRecoilState } from "recoil";
-import { video, mic,voice,join } from "../states/atoms/Media";
-
-
+import { video, mic,voice,join, configration } from "../states/atoms/Media";
 
 // Icons
 import { IoVideocamOff, IoVideocam, IoCall } from "react-icons/io5";
@@ -18,6 +16,8 @@ export default function ButtonControls() {
     const [isMic, setIsMic] = useRecoilState(mic);
     const [isVoice, setIsVoice] = useRecoilState(voice);
     const [isJoin, setIsJoin] = useRecoilState(join);
+    const [constraints, setConstraints] = useRecoilState(configration);
+
 
     function handleJoin(){
         if(!isJoin){
@@ -74,9 +74,9 @@ export default function ButtonControls() {
                     {/* Mic Toggle */}
                     <button onClick={handleMic} className="flex flex-col text-sm items-center justify-center gap-1">
                         {isMic ? (
-                            <IoMdMic className="size-10 p-2 bg-blue-500 text-white rounded-full" />
+                            <IoMdMic className="size-8 p-2 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <IoMdMicOff className="size-10 p-2 text-blt rounded-full bg-zinc-200" />
+                            <IoMdMicOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                         )}
 
                         <p>Mic</p>
@@ -85,9 +85,9 @@ export default function ButtonControls() {
                     {/* Video Toggle */}
                     <button onClick={handleVideo} className="flex flex-col text-sm items-center justify-center gap-1">
                         {isVideo ? (
-                            <IoVideocam className="size-10 p-2 bg-blue-500 text-white rounded-full" />
+                            <IoVideocam className="size-8 p-2 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <IoVideocamOff className="size-10 p-2 text-blt rounded-full bg-zinc-200" />
+                            <IoVideocamOff className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                         )}
 
 
@@ -98,9 +98,9 @@ export default function ButtonControls() {
 
                     <button onClick={handleVoice} className="flex flex-col text-sm items-center justify-center gap-1">
                         {isVoice ? (
-                            <HiMiniSpeakerWave className="size-10 p-2 bg-blue-500 text-white rounded-full" />
+                            <HiMiniSpeakerWave className="size-8 p-2 bg-blue-500 text-white rounded-full" />
                         ) : (
-                            <HiMiniSpeakerXMark className="size-10 p-2 text-blt rounded-full bg-zinc-200" />
+                            <HiMiniSpeakerXMark className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                         )}
 
 
@@ -111,9 +111,9 @@ export default function ButtonControls() {
                     {/* Disconnect */}
                     <button onClick={handleJoin} className="flex flex-col text-sm items-center justify-center gap-1">
                         {isJoin ? (
-                            <ImPhoneHangUp className="size-10 p-2 bg-red-700 text-white rounded-full" />
+                            <ImPhoneHangUp className="size-8 p-2 bg-red-700 text-white rounded-full" />
                         ) : (
-                            <IoCall className="size-10 p-2 text-blt rounded-full bg-zinc-200" />
+                            <IoCall className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                         )}
                         <p>{isJoin? "Cut" : "Call"}</p>
                     </button>
