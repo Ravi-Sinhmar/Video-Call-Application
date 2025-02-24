@@ -27,7 +27,7 @@ export default function LocalVideo() {
         if (peer) {
             openMediaDevices();
         }
-    }, [peer]);
+    }, [peer,constraints]);
     return (
         <video
             ref={localVideoRef}
