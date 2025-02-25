@@ -21,7 +21,7 @@ export default function ButtonControls() {
     const [isSetting,setIsSetting] = useRecoilState(setting);
 
     function handleJoin() {
-        setIsJoined(!isJoined);
+        setIsJoined(true);
         console.log(isJoined ? "Disconnect" : "Join");
     }
 
