@@ -92,15 +92,21 @@ export default function Join() {
         const email = isAdmin ? "admin@gmail.com" : "user@gmail.com";
         if (!isAdmin) {
             setIsPeer(true);
-            const offer = await createOffer();
-            socket.emit("user:call", { email, room: meetingId, offer });
-            console.log("Offer sent from user:", offer);
+    
+            // First offer creation and emission
+            const offer1 = await createOffer();
+            socket.emit("user:call", { email, room: meetingId, offer: offer1 });
+            console.log("First offer sent from user:", offer1);
+    
+            // Second offer creation and emission after 3 seconds
+            setTimeout(async () => {
+                const offer2 = await createOffer();
+                socket.emit("user:call", { email, room: meetingId, offer: offer2 });
+                console.log("Second offer sent from user after 3 seconds:", offer2);
+            }, 3000); // 3000 milliseconds = 3 seconds
         }
-    };
+    }
 
-    useEffect(()=>{
-         handleConnect();
-    },[isJoined])
 
     useEffect(() => {
         if (isAdmin) {
@@ -246,6 +252,7 @@ export default function Join() {
     }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId,isAdmin]);
 
 
+
     return (
     isSetting ? <Setting /> :  <div className="flex justify-center bg-white items-center w-svw h-svh">
         <div className="w-svw h-svh bg-white flex justify-center items-center sm:w-10/12 md:w-3/5 lg:w-2/5 md:aspect-square">
@@ -261,7 +268,7 @@ export default function Join() {
                         className="w-full h-full md:aspect-square  bg-white object-cover"
                     ></video>
                 </div>
-                <ButtonControls />
+                <ButtonControls onJoin={handleConnect} />
             </div>
         </div>
     </div> 

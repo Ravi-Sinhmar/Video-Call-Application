@@ -28,6 +28,7 @@ export default function ButtonControls() {
             return newState;
         });
     }
+    
     function handleMic() {
         const newConstraints = { ...constraints, audio: !isMic };
 
