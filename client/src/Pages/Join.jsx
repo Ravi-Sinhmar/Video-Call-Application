@@ -251,7 +251,17 @@ export default function Join() {
         }
     }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId,isAdmin]);
 
-
+    const handleJoin = async () => {
+        setIsJoined((prev) => {
+            const newState = !prev;
+            if (newState) {
+                handleConnect(); // Call handleConnect when joining
+            } else {
+                closePeerConnection(); // Call closePeerConnection when disconnecting
+            }
+            return newState;
+        });
+    };
 
     return (
     isSetting ? <Setting /> :  <div className="flex justify-center bg-white items-center w-svw h-svh">
@@ -268,7 +278,7 @@ export default function Join() {
                         className="w-full h-full md:aspect-square  bg-white object-cover"
                     ></video>
                 </div>
-                <ButtonControls onJoin={handleConnect} />
+                <ButtonControls onJoin={handleJoin} />
             </div>
         </div>
     </div> 
