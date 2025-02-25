@@ -57,16 +57,25 @@ function PeerProvider({ children }) {
       console.log("Video or peer is not initialized");
       return;
     }
-
+  
+    // Check if the RTCPeerConnection is in a valid state
+    if (peer.signalingState === 'closed') {
+      return;
+    }
+  
     const tracks = video.getTracks();
     const senders = peer.getSenders();
-
+  
     for (const track of tracks) {
       const senderExists = senders.some((sender) => sender.track && sender.track.id === track.id);
-
+  
       if (!senderExists) {
         console.log("Adding track:", track);
-        peer.addTrack(track, video);
+        try {
+          peer.addTrack(track, video);
+        } catch (error) {
+          console.error("Error adding track:", error);
+        }
       } else {
         console.log("Track already added:", track.id);
       }

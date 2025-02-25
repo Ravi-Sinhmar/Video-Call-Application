@@ -11,6 +11,7 @@ import PeerProvider from "./Contexts/peer"; // Import PeerProvider
 import Start from "./Pages/Start";
 import Join from "./Pages/Join";
 
+
 function App() {
   const isLoading = useRecoilValue(loading);
   return (
@@ -19,6 +20,7 @@ function App() {
         {/* Render Loader outside Routes */}
         {isLoading &&  <Loader>Loading...</Loader>}
         <Routes>
+
           <Route path="/" element={<Start />} />
           <Route path="/meeting" element={<Join />} />
         </Routes>

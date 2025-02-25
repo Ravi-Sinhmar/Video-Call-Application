@@ -8,15 +8,22 @@ import { socket } from "../utils/websocket";
 import { peerState } from "../states/atoms/User";
 import { usePeer } from "../Contexts/peer";
 import { loading } from "../states/atoms/User";
-import { voice } from "../states/atoms/Media";
+import { voice, audioInputDeviceState, audioOutputDeviceState, videoInputDeviceState, setting,joinState } from "../states/atoms/Media";
+import Setting from "../components/Setting";
+
 
 export default function Join() {
-    const setIsLoading = useSetRecoilState(loading)
+    const setIsLoading = useSetRecoilState(loading);
     const isVoice = useRecoilValue(voice);
+    const isSetting = useRecoilValue(setting);
     const [isAdmin, setIsAdmin] = useRecoilState(admin);
     const [meetingId, setMeetingId] = useRecoilState(meetingDetails);
     const [isPeer, setIsPeer] = useRecoilState(peerState);
+    const [audioId, setAudioId] = useRecoilState(audioInputDeviceState);
+    const [audioOutputId, setAudioOutputId] = useRecoilState(audioOutputDeviceState);
+    const [videoId, setVideoId] = useRecoilState(videoInputDeviceState);
     const [searchParams] = useSearchParams();
+    const [isJoined,setIsJoined] = useRecoilState(joinState);
     const remoteVideoRef = useRef();
     const { peer, createOffer, createAnswer, setRemoteAnswer, closePeerConnection } = usePeer();
 
@@ -86,7 +93,11 @@ export default function Join() {
             socket.emit("user:call", { email, room: meetingId, offer });
             console.log("Offer sent from user:", offer);
         }
-    }
+    };
+
+    useEffect(()=>{
+         handleConnect();
+    },[isJoined])
 
     useEffect(() => {
         if (isAdmin) {
@@ -119,7 +130,6 @@ export default function Join() {
                 console.log("Got the answer, now I will set it in my remoteAnswer");
                 const status = await setRemoteAnswer(answer);
                 if (status) {
-
                     socket.emit("user:done", { email, room: meetingId });
                     console.log("Done sent");
                 }
@@ -179,7 +189,6 @@ export default function Join() {
 
     }, [isAdmin, socket, createAnswer, meetingId]);
 
-
     useEffect(() => {
         const handleTrack = (event) => {
             console.log("Remote track received");
@@ -195,26 +204,42 @@ export default function Join() {
         };
     }, [peer]);
 
+    useEffect(() => {
+        // Get stored values from localStorage
+        const storedAudioInput = localStorage.getItem("audioInput");
+        const storedAudioOutput = localStorage.getItem("audioOutput");
+        const storedVideoInput = localStorage.getItem("videoInput");
+
+        // Update global states if they are null
+        if (!audioId && storedAudioInput) {
+            setAudioId(storedAudioInput);
+        }
+        if (!audioOutputId && storedAudioOutput) {
+            setAudioOutputId(storedAudioOutput);
+        }
+        if (!videoId && storedVideoInput) {
+            setVideoId(storedVideoInput);
+        }
+    }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId]);
+
     return (
-        <React.Fragment>
-            <div className="flex justify-center bg-white items-center w-svw h-svh">
-                <div className="w-svw h-svh bg-white flex justify-center items-center sm:w-10/12 md:w-3/5 lg:w-2/5 md:aspect-square">
-                    <div className="bg-transparent ring-4 ring-blf rounded-lg h-full w-full flex flex-col justify-between overflow-hidden relative px-2 pt-2">
-                        <button onClick={handleConnect}>Connect</button>
-                        <LocalVideo />
-                        <div className="flex flex-col justify-center items-center h-full">
-                            <video
-                                ref={remoteVideoRef}
-                                autoPlay
-                                playsInline
-                                muted={!isVoice}
-                                className="w-full h-full md:aspect-square ring-2 ring-blt bg-white rounded-md object-cover"
-                            ></video>
-                        </div>
-                        <ButtonControls />
-                    </div>
+    isSetting ? <Setting /> :  <div className="flex justify-center bg-white items-center w-svw h-svh">
+        <div className="w-svw h-svh bg-white flex justify-center items-center sm:w-10/12 md:w-3/5 lg:w-2/5 md:aspect-square">
+            <div className="bg-transparent ring-4 ring-blf  h-full w-full flex flex-col justify-between overflow-hidden relative px-2 pt-2">
+                <button onClick={handleConnect}>Connect</button>
+                <LocalVideo />
+                <div className="flex flex-col justify-center items-center h-full">
+                    <video
+                        ref={remoteVideoRef}
+                        autoPlay
+                        playsInline
+                        muted={!isVoice}
+                        className="w-full h-full md:aspect-square  bg-white object-cover"
+                    ></video>
                 </div>
+                <ButtonControls />
             </div>
-        </React.Fragment>
+        </div>
+    </div> 
     );
 }

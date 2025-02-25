@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { loading } from "../states/atoms/User";
+import { loading,meetingDetails } from "../states/atoms/User";
 import { useResetRecoilState, useSetRecoilState } from "recoil";
+import { setting } from "../states/atoms/Media";
 
 // setting url from .env file
 const BACKEND_URL =
@@ -17,11 +18,13 @@ const BACKEND_URL =
 function Start() {
     const navigate = useNavigate();
     const setIsLoading = useSetRecoilState(loading);
+    const setMeetingId = useSetRecoilState(meetingDetails);
     const [isClick, setIsClick] = useState(false);
     const [name, setName] = useState("");
     const [smallLink, setSmallLink] = useState(null);
     const [shareLink, setShareLink] = useState(null);
     const linkRef = useRef(null);
+    const setSetting = useSetRecoilState(setting);
  
     const saveMeet = useCallback(() => {
         const content = { Name: name };
@@ -40,6 +43,7 @@ function Start() {
                 if (response.success) {
                     const meetingId = response.data;
                     localStorage.setItem("meetingId", meetingId);
+                    setMeetingId(meetingId);
                     setSmallLink(`/meeting?meetingId=${meetingId}`);
                     setShareLink(
                         `${FRONTEND_URL}/meeting?meetingId=${meetingId}`
@@ -58,6 +62,7 @@ function Start() {
         try {
             await navigator.clipboard.writeText(linkRef.current.value);
             navigate(smallLink);
+            setSetting(true);
         } catch (err) {
             console.error("Failed to copy: ", err);
         }
