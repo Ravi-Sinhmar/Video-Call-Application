@@ -86,7 +86,8 @@ export default function Join() {
         return () => {
             socket.emit("room:leave", { email, room: meetingId });
             socket.disconnect();
-            closePeerConnection();
+            console.log("Closing Peer");
+            // closePeerConnection();
         };
     }, [meetingId, isAdmin]);
 
