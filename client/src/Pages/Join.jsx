@@ -10,6 +10,7 @@ import { usePeer } from "../Contexts/peer";
 import { loading } from "../states/atoms/User";
 import { voice, audioInputDeviceState, audioOutputDeviceState, videoInputDeviceState, setting,joinState } from "../states/atoms/Media";
 import Setting from "../components/Setting";
+import { startJoining } from "../states/atoms/Media";
 
 
 
@@ -27,6 +28,7 @@ export default function Join() {
     const [isJoined,setIsJoined] = useRecoilState(joinState);
     const remoteVideoRef = useRef();
     const { peer, createOffer, createAnswer, setRemoteAnswer, closePeerConnection } = usePeer();
+    const isJoining = useRecoilValue(startJoining);
 
     const BACKEND_URL =
         import.meta.env.VITE_ENV === "Production"
@@ -92,20 +94,22 @@ export default function Join() {
         const email = isAdmin ? "admin@gmail.com" : "user@gmail.com";
         if (!isAdmin) {
             setIsPeer(true);
-    
             // First offer creation and emission
             const offer1 = await createOffer();
             socket.emit("user:call", { email, room: meetingId, offer: offer1 });
             console.log("First offer sent from user:", offer1);
-    
-            // Second offer creation and emission after 3 seconds
-            setTimeout(async () => {
-                const offer2 = await createOffer();
-                socket.emit("user:call", { email, room: meetingId, offer: offer2 });
-                console.log("Second offer sent from user after 3 seconds:", offer2);
-            }, 3000); // 3000 milliseconds = 3 seconds
         }
-    }
+    };
+
+    useEffect(()=>{
+        if(!isAdmin && isJoining){
+            handleConnect();
+            setTimeout(() => {
+                handleConnect();
+            }, 2000);
+            
+        }
+    },[isAdmin,isJoining])
 
 
     useEffect(() => {
@@ -251,17 +255,7 @@ export default function Join() {
         }
     }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId,isAdmin]);
 
-    const handleJoin = async () => {
-        setIsJoined((prev) => {
-            const newState = !prev;
-            if (newState) {
-                handleConnect(); // Call handleConnect when joining
-            } else {
-                closePeerConnection(); // Call closePeerConnection when disconnecting
-            }
-            return newState;
-        });
-    };
+
 
     return (
     isSetting ? <Setting /> :  <div className="flex justify-center bg-white items-center w-svw h-svh">
@@ -278,7 +272,7 @@ export default function Join() {
                         className="w-full h-full md:aspect-square  bg-white object-cover"
                     ></video>
                 </div>
-                <ButtonControls onJoin={handleJoin} />
+                <ButtonControls/>
             </div>
         </div>
     </div> 

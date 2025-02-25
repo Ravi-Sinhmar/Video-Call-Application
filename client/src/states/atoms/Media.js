@@ -53,3 +53,8 @@ export const setting = atom({
   default: false,
 });
 
+export const startJoining = atom({
+  key: "isJoining",
+  default: false,
+});
+

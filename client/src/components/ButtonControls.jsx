@@ -1,6 +1,7 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { video, mic, voice, joinState, configration , setting} from "../states/atoms/Media";
+import { startJoining } from '../states/atoms/Media';
 
 // Icons
 import { IoVideocamOff, IoVideocam, IoCall } from "react-icons/io5";
@@ -19,14 +20,11 @@ export default function ButtonControls() {
     const [isJoined, setIsJoined] = useRecoilState(joinState);
     const [constraints, setConstraints] = useRecoilState(configration);
     const [isSetting,setIsSetting] = useRecoilState(setting);
+    const [isJoining,setIsJoining] = useRecoilState(startJoining);
+
 
     function handleJoin() {
-        // Use functional form to get the latest state value
-        setIsJoined((prev) => {
-            const newState = !prev;
-            console.log(newState ? "Join" : "Disconnect");
-            return newState;
-        });
+       setIsJoining(true);
     }
     
     function handleMic() {
@@ -96,7 +94,9 @@ export default function ButtonControls() {
                     ) : (
                         <IoCall className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                     )}
-                    <p>{isJoined ? "Disconnect" : "Join"}</p>
+                    {isJoining ? <p>Joining</p> : <p>{isJoined ? "Disconnect" : "Join"}</p>}
+                    
+
                 </button>
 
                 {/* Sound Toggle */}
