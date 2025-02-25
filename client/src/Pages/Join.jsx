@@ -12,10 +12,11 @@ import { voice, audioInputDeviceState, audioOutputDeviceState, videoInputDeviceS
 import Setting from "../components/Setting";
 
 
+
 export default function Join() {
     const setIsLoading = useSetRecoilState(loading);
     const isVoice = useRecoilValue(voice);
-    const isSetting = useRecoilValue(setting);
+    const [isSetting,setIsSetting] = useRecoilState(setting);
     const [isAdmin, setIsAdmin] = useRecoilState(admin);
     const [meetingId, setMeetingId] = useRecoilState(meetingDetails);
     const [isPeer, setIsPeer] = useRecoilState(peerState);
@@ -51,6 +52,8 @@ export default function Join() {
                     setMeetingId(meetingId);
                     if (meetingId === localStorage.getItem("meetingId")) {
                         setIsAdmin(true);
+                    }else{
+                        setIsAdmin(false);
                     }
                 }
             })
@@ -206,27 +209,47 @@ export default function Join() {
 
     useEffect(() => {
         // Get stored values from localStorage
+        if(!videoId && !isAdmin){
+            setIsSetting(true);
+            return;
+        };
+
+        if(!audioId && !isAdmin){
+            setIsSetting(true);
+            return;
+        }
+    
         const storedAudioInput = localStorage.getItem("audioInput");
         const storedAudioOutput = localStorage.getItem("audioOutput");
         const storedVideoInput = localStorage.getItem("videoInput");
 
-        // Update global states if they are null
-        if (!audioId && storedAudioInput) {
-            setAudioId(storedAudioInput);
-        }
-        if (!audioOutputId && storedAudioOutput) {
-            setAudioOutputId(storedAudioOutput);
-        }
         if (!videoId && storedVideoInput) {
             setVideoId(storedVideoInput);
         }
-    }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId]);
+        else{
+            setIsSetting(true);
+            return;
+        }
+       
+        // Update global states if they are null
+        if (!audioId && storedAudioInput) {
+            setAudioId(storedAudioInput);
+        }else{
+            setIsSetting(true);
+            return;
+        }
+        
+
+        if (!audioOutputId && storedAudioOutput) {
+            setAudioOutputId(storedAudioOutput);
+        }
+    }, [audioId, audioOutputId, videoId, setAudioId, setAudioOutputId, setVideoId,isAdmin]);
+
 
     return (
     isSetting ? <Setting /> :  <div className="flex justify-center bg-white items-center w-svw h-svh">
         <div className="w-svw h-svh bg-white flex justify-center items-center sm:w-10/12 md:w-3/5 lg:w-2/5 md:aspect-square">
             <div className="bg-transparent ring-4 ring-blf  h-full w-full flex flex-col justify-between overflow-hidden relative px-2 pt-2">
-                <button onClick={handleConnect}>Connect</button>
                 <LocalVideo />
                 <div className="flex flex-col justify-center items-center h-full">
                     <video

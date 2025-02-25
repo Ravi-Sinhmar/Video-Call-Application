@@ -92,7 +92,7 @@ export default function ButtonControls() {
                     ) : (
                         <IoCall className="size-8 p-2 text-gray-800 rounded-full bg-zinc-200" />
                     )}
-                    <p>{isJoined ? "Cut" : "Call"}</p>
+                    <p>{isJoined ? "Disconnect" : "Join"}</p>
                 </button>
 
                 {/* Sound Toggle */}
