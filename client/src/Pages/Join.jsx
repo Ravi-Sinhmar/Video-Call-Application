@@ -252,6 +252,7 @@ export default function Join() {
             <div className="bg-transparent ring-4 ring-blf  h-full w-full flex flex-col justify-between overflow-hidden relative px-2 pt-2">
                 <LocalVideo />
                 <div className="flex flex-col justify-center items-center h-full">
+                  
                     <video
                         ref={remoteVideoRef}
                         autoPlay

@@ -21,10 +21,13 @@ export default function ButtonControls() {
     const [isSetting,setIsSetting] = useRecoilState(setting);
 
     function handleJoin() {
-        setIsJoined(true);
-        console.log(isJoined ? "Disconnect" : "Join");
+        // Use functional form to get the latest state value
+        setIsJoined((prev) => {
+            const newState = !prev;
+            console.log(newState ? "Join" : "Disconnect");
+            return newState;
+        });
     }
-
     function handleMic() {
         const newConstraints = { ...constraints, audio: !isMic };
 
