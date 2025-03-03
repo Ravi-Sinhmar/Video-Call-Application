@@ -269,7 +269,6 @@ export default function Join() {
                         ref={remoteVideoRef}
                         autoPlay
                         playsInline
-                       
                         className="w-full h-full md:aspect-square  bg-white object-cover"
                     ></video>
                 </div>
