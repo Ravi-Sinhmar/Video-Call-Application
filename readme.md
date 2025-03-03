@@ -32,14 +32,13 @@ FaceSync is a modern video call application designed to provide users with a smo
 ## Screenshots
 
 Here are some screenshots of the application:
-
-![Screenshot 1](./client/Design/1.png)
-![Screenshot 2](./client/Design/2.png)
-![Screenshot 3](./client/Design/3.png)
-![Screenshot 4](./client/Design/4.png)
-![Screenshot 5](./client/Design/5.png)
-![Screenshot 6](./client/Design/6.png)
-![Screenshot 7](./client/Design/7.png)
+<img src="./client/Design/1.png" alt="Screenshot 1" width="400" />
+<img src="./client/Design/2.png" alt="Screenshot 2" width="400" />
+<img src="./client/Design/3.png" alt="Screenshot 3" width="400" />
+<img src="./client/Design/4.png" alt="Screenshot 4" width="400" />
+<img src="./client/Design/5.png" alt="Screenshot 5" width="400" />
+<img src="./client/Design/6.png" alt="Screenshot 6" width="400" />
+<img src="./client/Design/7.png" alt="Screenshot 7" width="400" />
 
 ---
 
