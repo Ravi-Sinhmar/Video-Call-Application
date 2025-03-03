@@ -25,7 +25,7 @@ FaceSync is a modern video call application designed to provide users with a smo
 - **Database**: MongoDB
 - **Real-Time Communication**: WebRTC, WebSockets
 - **Authentication**: JWT (JSON Web Tokens)
-- **Deployment**: Vercel (Frontend), Render/Heroku (Backend)
+- **Deployment**: Vercel (Frontend), Render (Backend)
 
 ---
 
