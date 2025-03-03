@@ -32,6 +32,7 @@ FaceSync is a modern video call application designed to provide users with a smo
 ## Screenshots
 
 Here are some screenshots of the application:
+<div> 
 <img src="./client/Design/1.png" alt="Screenshot 1" width="400" />
 <img src="./client/Design/2.png" alt="Screenshot 2" width="400" />
 <img src="./client/Design/3.png" alt="Screenshot 3" width="400" />
@@ -39,7 +40,7 @@ Here are some screenshots of the application:
 <img src="./client/Design/5.png" alt="Screenshot 5" width="400" />
 <img src="./client/Design/6.png" alt="Screenshot 6" width="400" />
 <img src="./client/Design/7.png" alt="Screenshot 7" width="400" />
-
+</div>
 ---
 
 ## Connect with Me
